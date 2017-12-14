@@ -1,4 +1,4 @@
-VENV_DIR = ".venv"
+VENV_DIR = .venv
 
 all:	clean update
 		if [ ! -d "$(VENV_DIR)" ]; then \
@@ -8,13 +8,16 @@ all:	clean update
 		fi
 
 clean:
-	if [ -d $(VENV_DIR) ]; then \
-		rm -r $(VENV_DIR)/*; \
-		rmdir $(VENV_DIR); \
-	fi
+		if [ -d $(VENV_DIR) ]; then \
+			rm -r $(VENV_DIR)/*; \
+			rmdir $(VENV_DIR); \
+		fi
 
 update:
 		git pull
+
+run:
+		$(VENV_DIR)/bin/python3 run.py
 
 .PHONY: create_venv init_venv update init
  
