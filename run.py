@@ -1,5 +1,5 @@
-from loader.models import Loader
+from core.client import Client
 
 if __name__ == "__main__":
-    print("Starting loader...")
-    loader = Loader()
+    print("Starting client...")
+    client = Client()
