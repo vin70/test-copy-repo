@@ -1,10 +1,9 @@
-VENV_DIR = .venv
+VENV_DIR = .env
 
-all:	clean update
+all:	clean
 		if [ ! -d "$(VENV_DIR)" ]; then \
 			virtualenv $(VENV_DIR) -p python3; \
-			source $(VENV_DIR)/bin/activate; \
-			pip install -r requirements.txt; \
+			$(VENV_DIR)/bin/pip install -r requirements.txt; \
 		fi
 
 clean:
@@ -13,11 +12,6 @@ clean:
 			rmdir $(VENV_DIR); \
 		fi
 
-update:
-		git pull
 
-run:
-		$(VENV_DIR)/bin/python3 run.py
-
-.PHONY: create_venv init_venv update init
+.PHONY: all clean
  

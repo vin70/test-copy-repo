@@ -3,3 +3,6 @@
 
 # Ignore local settings
 settings/local.py
+
+# Ignore chached python files
+*.pyc

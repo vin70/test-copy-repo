@@ -1,4 +1,6 @@
+AWS_TOKEN = ''
+ASK_SECRET = ''
+AWS_QUEUE = ''
+AWS_BUCKET = ''
 
-ROOT_DIR = 
-
-PATH_TO_IMAGES = "../images/"
+AWS_REGION = ''
