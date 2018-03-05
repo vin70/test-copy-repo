@@ -18,11 +18,7 @@ class Loader(TaskThread):
         if image is not None:
             cv2.imshow('Preview', image)
 
-    def shutdown(self):
-        cv2.destroyAllWindows()
-        super().shutdown()
-
     def send_to_server(self, image):
         print("Sending image to server...")
-        cv2.imwrite('temp.jpg', image)
+        cv2.imwrite('temp.png', image)
     

@@ -6,3 +6,7 @@ settings/local.py
 
 # Ignore chached python files
 *.pyc
+
+# Ignore images
+*.img
+*.png
