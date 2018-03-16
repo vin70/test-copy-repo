@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "stopOnEntry": false,
-            "pythonPath": "${workspaceFolder}/.venv/bin/python3",
+            "pythonPath": "${workspaceFolder}/.env/bin/python3",
             "program": "${workspaceFolder}/run.py",
             "cwd": "${workspaceFolder}",
             "env": {},

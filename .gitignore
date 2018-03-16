@@ -1,5 +1,7 @@
 # Ignore virtual env folder
 .venv/
+.env/
+.vscode/
 
 # Ignore local settings
 settings/local.py
