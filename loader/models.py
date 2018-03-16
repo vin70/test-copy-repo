@@ -20,6 +20,7 @@ class Loader(object):
             self.pr.enable()
             img = cv2.imencode('.jpg', self.img)[1].tostring()
             response = self.client.detect_labels(Image={'Bytes': img})
+            self.img = None
                 
             print('\nDetected labels')    
             for label in response['Labels']:
