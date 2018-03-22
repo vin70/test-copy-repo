@@ -6,9 +6,10 @@ if __name__ == "__main__":
     print("Starting client...")
 
     client = Loader()
+    client.process_images()
 
-    ioloop = asyncio.get_event_loop()
-    asyncio.ensure_future(client.take_image())
-    asyncio.ensure_future(client.send_to_server())
-    ioloop.run_forever()
-    ioloop.close()
+    # ioloop = asyncio.get_event_loop()
+    # asyncio.ensure_future(client.take_image())
+    # asyncio.ensure_future(client.send_to_server())
+    # ioloop.run_forever()
+    # ioloop.close()

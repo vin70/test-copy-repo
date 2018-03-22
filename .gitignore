@@ -10,5 +10,5 @@ settings/local.py
 *.pyc
 
 # Ignore images
-*.img
+*.jpeg
 *.png
