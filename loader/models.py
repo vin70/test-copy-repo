@@ -9,7 +9,8 @@ from settings import (
     AWS_REGION,
     AWS_ACCESS_KEY,
     AWS_ACCESS_SECRET_KEY,
-    IMG_DIR
+    IMG_DIR,
+    BASE_DIR
 )
 
 class Loader(object):
@@ -44,16 +45,21 @@ class Loader(object):
         asyncio.ensure_future(self.send_to_server())
 
     def process_images(self):
-        imgs = [join(IMG_DIR, f) for f in listdir(IMG_DIR) if isfile(join(IMG_DIR, f))]
+        imgs = [f for f in listdir(IMG_DIR) if isfile(join(IMG_DIR, f))]
+        res = ""
         for img in imgs:
             start_time = datetime.now()
-            with open(img, "rb") as image:
+            with open(join(IMG_DIR, img), "rb") as image:
                 f = image.read()
                 byte = bytearray(f)
             response = self.client.detect_labels(Image={'Bytes': byte})
-            print('\nDetected labels')
+            res += '\nDetected labels for image %s\n' % img
             for label in response['Labels']:
-                print(label['Name'] + ' : ' + str(label['Confidence']))
+                res += label['Name'] + ' : ' + str(label['Confidence']) + "\n"
             end_time = datetime.now()
             took_time = end_time - start_time
-            print("Done... Took: %sms" % took_time.microseconds)
+            res += "Done... Took: %sms\n" % took_time.microseconds
+        print(res)
+        with open(join(BASE_DIR, "process_imgs.%s.log" % datetime.now()), "w+") as log:
+            log.write(res)
+            

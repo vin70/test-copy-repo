@@ -1,5 +1,4 @@
 import asyncio
-import cProfile
 from loader.models import Loader
 
 if __name__ == "__main__":
