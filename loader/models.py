@@ -13,6 +13,90 @@ from settings import (
     BASE_DIR
 )
 
+objects_of_interest = {
+    'Outdoors': {
+        'threshold': 50.0,
+        'byte': 1,
+        'synonyms': [
+            'Snow',
+            'Landscape',
+            'Scenery',
+            'Sand',
+            'Soil',
+            'Nature',
+            'Tree',
+            'Flora',
+            'Plant',
+            'Birch',
+            'Forest',
+            'Grove',
+            'Land',
+            'Oak',
+            'Sycamore',
+            'City',
+            'Urban',
+        ]
+    },
+    'Path': {
+        'threshold': 50.0,
+        'byte': 2,
+        'synonyms': [
+            'Road',
+            'Asphalt',
+            'Sidewalk',
+            'Walkway',
+            'Walking',
+            'Trail',
+            'Alley',
+            'Alleyway',
+            'Road',
+            'Pavement',
+            'Street',
+            'Park',
+            'Freeway',
+            'Highway',
+            'Intersection'
+        ]        
+    },
+    'Obstacle': {
+        'threshold': 50.0,
+        'byte': 3,
+        'synonyms': [
+            'Dirt Road',
+            'Gravel',
+            'Brick',
+            'Parking',
+            'Flagstone',
+            'Column',
+            'Pillar',
+            'Fence',
+            'Water',
+            'Offroad'
+        ]
+    },
+    'Sign': {
+        'threshold': 50.0,
+        'byte': 5,
+        'synonyms': []
+    },
+    'Car': {
+        'threshold': 50.0,
+        'byte': 7,
+        'synonyms': [
+            'Automobile',
+            'Transportation',
+            'Vehicle',
+            'Suv',
+            'Sedan',
+        ]        
+    },
+    'Human': {
+        'threshold': 50.0,
+        'byte': 8,
+        'synonyms': []
+    }
+}
+
 class Loader(object):
 
     def __init__(self):
@@ -44,17 +128,29 @@ class Loader(object):
         await asyncio.sleep(1)
         asyncio.ensure_future(self.send_to_server())
 
+    def get_labels(self, img):
+        print ('\nLoading image %s\n' % img)
+        with open(join(IMG_DIR, img), "rb") as image:
+            f = image.read()
+            byte = bytearray(f)
+        response = self.client.detect_labels(Image={'Bytes': byte})
+
+        return response['Labels']
+
+    def print_labels(self, labels):
+        print('\nDetected labels')    
+        for label in labels:
+            print (label['Name'] + ' : ' + str(label['Confidence']))
+
     def process_images(self):
         imgs = [f for f in listdir(IMG_DIR) if isfile(join(IMG_DIR, f))]
         res = ""
         for img in imgs:
             start_time = datetime.now()
-            with open(join(IMG_DIR, img), "rb") as image:
-                f = image.read()
-                byte = bytearray(f)
-            response = self.client.detect_labels(Image={'Bytes': byte})
-            res += '\nDetected labels for image %s\n' % img
-            for label in response['Labels']:
+            labels = self.get_labels(img)
+            res += 'Detected labels for image %s\n' % img
+            self.print_labels(labels)
+            for label in labels:
                 res += label['Name'] + ' : ' + str(label['Confidence']) + "\n"
             end_time = datetime.now()
             took_time = end_time - start_time
@@ -62,4 +158,30 @@ class Loader(object):
         print(res)
         with open(join(BASE_DIR, "process_imgs.%s.log" % datetime.now()), "w+") as log:
             log.write(res)
-            
+
+    def get_bytes_from_labels(self, labels):
+        bytes_res = []
+        for label in labels:
+            if label['Name'] in objects_of_interest.keys():
+                if label['Confidence'] >= objects_of_interest[label['Name']]['threshold']:
+                    bytes_res.append(objects_of_interest[label['Name']]['byte'].to_bytes(8, byteorder='big', signed=True))
+
+        return bytes_res
+
+    def filter_labels(self, labels):
+        res = []
+        for label in labels:
+            if label['Name'] in objects_of_interest.keys():
+                if label['Name'] not in res:
+                    res.append(label['Name'])
+            else:
+                for key, val in objects_of_interest.items():
+                    if label['Name'] in val['synonyms']:
+                        if key not in res:
+                            res.append(key)
+
+        return res
+
+
+    def get_local_imgs(self):
+        return [f for f in listdir(IMG_DIR) if isfile(join(IMG_DIR, f))]
