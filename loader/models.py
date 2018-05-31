@@ -56,7 +56,7 @@ objects_of_interest = {
             'Freeway',
             'Highway',
             'Intersection'
-        ]        
+        ]
     },
     'Obstacle': {
         'threshold': 50.0,
@@ -88,14 +88,15 @@ objects_of_interest = {
             'Vehicle',
             'Suv',
             'Sedan',
-        ]        
+        ]
     },
     'Human': {
         'threshold': 50.0,
         'byte': 8,
-        'synonyms': []
+        'synonyms': ['People', "Person"]
     }
 }
+
 
 class Loader(object):
 
@@ -105,7 +106,7 @@ class Loader(object):
             'rekognition',
             aws_access_key_id=AWS_ACCESS_KEY,
             aws_secret_access_key=AWS_ACCESS_SECRET_KEY,
-            region_name = AWS_REGION
+            region_name=AWS_REGION
         )
         self.img = None
         self.pr = cProfile.Profile()
@@ -119,17 +120,17 @@ class Loader(object):
             img = cv2.imencode('.jpg', self.img)[1].tostring()
             response = self.client.detect_labels(Image={'Bytes': img})
             self.img = None
-                
-            print('\nDetected labels')    
+
+            print('\nDetected labels')
             for label in response['Labels']:
-                print (label['Name'] + ' : ' + str(label['Confidence']))
+                print(label['Name'] + ' : ' + str(label['Confidence']))
 
             print('Done...')
         await asyncio.sleep(1)
         asyncio.ensure_future(self.send_to_server())
 
     def get_labels(self, img):
-        print ('\nLoading image %s\n' % img)
+        print('\nLoading image %s\n' % img)
         with open(join(IMG_DIR, img), "rb") as image:
             f = image.read()
             byte = bytearray(f)
@@ -138,9 +139,9 @@ class Loader(object):
         return response['Labels']
 
     def print_labels(self, labels):
-        print('\nDetected labels')    
+        print('\nDetected labels')
         for label in labels:
-            print (label['Name'] + ' : ' + str(label['Confidence']))
+            print(label['Name'] + ' : ' + str(label['Confidence']))
 
     def process_images(self):
         imgs = [f for f in listdir(IMG_DIR) if isfile(join(IMG_DIR, f))]
@@ -164,7 +165,8 @@ class Loader(object):
         for label in labels:
             if label['Name'] in objects_of_interest.keys():
                 if label['Confidence'] >= objects_of_interest[label['Name']]['threshold']:
-                    bytes_res.append(objects_of_interest[label['Name']]['byte'].to_bytes(8, byteorder='big', signed=True))
+                    bytes_res.append(objects_of_interest[label['Name']]['byte'].to_bytes(
+                        8, byteorder='big', signed=True))
 
         return bytes_res
 
@@ -181,7 +183,6 @@ class Loader(object):
                             res.append(key)
 
         return res
-
 
     def get_local_imgs(self):
         return [f for f in listdir(IMG_DIR) if isfile(join(IMG_DIR, f))]
