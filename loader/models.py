@@ -108,18 +108,18 @@ class Loader(object):
             aws_secret_access_key=AWS_ACCESS_SECRET_KEY,
             region_name=AWS_REGION
         )
-        self.img = None
-        self.pr = cProfile.Profile()
+        self._img = None
+        self._pr = cProfile.Profile()
 
     async def take_image(self):
-        _, self.img = self.cam.read()
+        _, self._img = self.cam.read()
         asyncio.ensure_future(self.take_image())
 
     async def send_to_server(self):
-        if self.img is not None:
-            img = cv2.imencode('.jpg', self.img)[1].tostring()
+        if self._img is not None:
+            img = cv2.imencode('.jpg', self._img)[1].tostring()
             response = self.client.detect_labels(Image={'Bytes': img})
-            self.img = None
+            self._img = None
 
             print('\nDetected labels')
             for label in response['Labels']:
