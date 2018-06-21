@@ -129,10 +129,12 @@ class Loader(object):
             print('\nDetected labels')
             for label in response['Labels']:
                 print(label['Name'] + ' : ' + str(label['Confidence']))
+            filtered_labels = self.filter_labels(response['Labels'])
+            print(filtered_labels)
             cv2.imshow('image', cashed_imd)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
-            cashed_img = None
+            cashed_imd = None
 
             print('Done...')
         await asyncio.sleep(1)
