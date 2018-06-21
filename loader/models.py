@@ -94,6 +94,11 @@ objects_of_interest = {
         'threshold': 50.0,
         'byte': 8,
         'synonyms': ['People', "Person"]
+    },
+    'Light': {
+        'threshold': 50.0,
+        'byte': 9,
+        'synonyms': ['Traffic Light', 'Light']
     }
 }
 
@@ -117,13 +122,17 @@ class Loader(object):
 
     async def send_to_server(self):
         if self._img is not None:
-            img = cv2.imencode('.jpg', self._img)[1].tostring()
+            cashed_imd = self._img
+            img = cv2.imencode('.jpg', cashed_imd)[1].tostring()
             response = self.client.detect_labels(Image={'Bytes': img})
-            self._img = None
 
             print('\nDetected labels')
             for label in response['Labels']:
                 print(label['Name'] + ' : ' + str(label['Confidence']))
+            cv2.imshow('image', cashed_imd)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            cashed_img = None
 
             print('Done...')
         await asyncio.sleep(1)
