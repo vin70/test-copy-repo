@@ -3,7 +3,7 @@ TODO: fill description
 
 ## Instalation
 ```
-make
+make test 1
 ```
 ## Usage
 ```
