@@ -3,7 +3,7 @@ TODO: fill description
 
 ## Instalation
 ```
-make TEST 1 ROW FROM BD (test #2)
+make TEST 1 ROW FROM BD (test 3)
 ```
 ## Usage
 ```
